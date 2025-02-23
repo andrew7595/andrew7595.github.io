@@ -1,0 +1,1 @@
+window.UNITY_CONSTANTS = {"UNITY_WEB_NAME":"lightly","UNITY_WEBGL_LOADER_URL":"Build/UnityLoader.js","UNITY_WEBGL_BUILD_URL":"Build/data.json","UNITY_WIDTH":768,"UNITY_HEIGHT":1024}
