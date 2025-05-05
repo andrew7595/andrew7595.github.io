@@ -1,110 +1,181 @@
-const create360Viewer = require('../');
-const getMaxTextureSize = require('./getMaxTextureSize');
-const dragDrop = require('drag-drop');
+var createSphere = require('primitive-sphere');
+var createControls = require('orbit-controls');
+var createCamera = require('perspective-camera');
+var createRegl = require('regl');
+var createLoop = require('raf-loop');
+var defined = require('defined');
+var assign = require('object-assign');
 
-const dropRegion = document.querySelector('#drop-region');
+// Generate some vertex data for a UV sphere
+// This can be re-used instead of computed each time
+var sphere;
 
-// Get a canvas of some sort, e.g. fullscreen or embedded in a site
-const canvas = createCanvas({
-  canvas: document.querySelector('#canvas'),
-  // without this, the canvas defaults to full-screen
-  // viewport: [ 20, 20, 500, 256 ]
-});
+module.exports = create360Viewer;
+function create360Viewer (opt) {
+  opt = opt || {};
 
-// Get the max image size possible
-const imageUrl = getImageURL();
+  var canvas = opt.canvas || document.createElement('canvas');
 
-// whether to always rotate the view
-const autoSpin = false;
+  if (!sphere) {
+    sphere = createSphere(1, {
+      segments: 64
+    });
+  }
 
-// Load your image
-const image = new Image();
-image.src = imageUrl;
-image.onload = () => {
-  // Setup the 360 viewer
-  const viewer = create360Viewer({
-    image: image,
+  // Create a new regl instance
+  var regl = createRegl({
     canvas: canvas
   });
 
-  setupDragDrop(canvas, viewer);
+  // Our perspective camera will hold projection/view matrices
+  var camera = createCamera({
+    fov: defined(opt.fov, 45 * Math.PI / 180),
+    near: 0.1,
+    far: 10
+  })
 
-  // Start canvas render loop
-  viewer.start();
+  // The mouse/touch input controls for the orbiting in 360
+  var controls = createControls(assign({}, opt, {
+    element: canvas,
+    parent: window,
+    rotateSpeed: defined(opt.rotateSpeed, 0.75 / (Math.PI * 2)),
+    damping: defined(opt.damping, 0.35),
+    zoom: false,
+    pinch: false,
+    distance: 0
+  }));
 
-  viewer.on('tick', (dt) => {
-    if (autoSpin && !viewer.controls.dragging) {
-      viewer.controls.theta -= dt * 0.00005;
-    }
-  });
-};
-
-// Utility to create a device pixel scaled canvas
-function createCanvas (opt = {}) {
-  // default to full screen (no width/height specified)
-  const viewport = opt.viewport || [ 0, 0 ];
-
-  const canvas = opt.canvas || document.createElement('canvas');
-  canvas.style.position = 'absolute';
-  canvas.style.top = `${viewport[0]}px`;
-  canvas.style.left = `${viewport[1]}px`;
-
-  // Resize the canvas with the proper device pixel ratio
-  const resizeCanvas = () => {
-    // default to fullscreen if viewport width/height is unspecified
-    const width = typeof viewport[2] === 'number' ? viewport[2] : window.innerWidth;
-    const height = typeof viewport[3] === 'number' ? viewport[3] : window.innerHeight;
-    const dpr = window.devicePixelRatio;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
+  // settings for gl.clear
+  var clearOpts = {
+    color: [ 0, 0, 0, 0 ],
+    depth: 1
   };
 
-  // Ensure the grab cursor appears even when the mouse is outside the window
-  const setupGrabCursor = () => {
-    canvas.addEventListener('mousedown', () => {
-      document.documentElement.classList.remove('grabbing');
-      document.documentElement.classList.add('grabbing');
-    });
-    window.addEventListener('mouseup', () => {
-      document.documentElement.classList.remove('grabbing');
-    });
+  var gl = regl._gl;
+  var destroyed = false;
+
+  // allow HTMLImageElement or unspecified image
+  var texture = regl.texture(getTextureParams(opt.image))
+
+  // We create a new "mesh" that represents our 360 textured sphere
+  var drawMesh = regl({
+    // The uniforms for this shader
+    uniforms: {
+      // Creates a GPU texture from our Image
+      map: texture,
+      // Camera matrices will have to be passed into this mesh
+      projection: regl.prop('projection'),
+      view: regl.prop('view')
+    },
+    // The fragment shader
+    frag: [
+      'precision highp float;',
+      'uniform sampler2D map;',
+      'uniform vec4 color;',
+      'varying vec2 vUv;',
+      'void main() {',
+      '  vec2 uv = 1.0 - vUv;',
+      '  gl_FragColor = texture2D(map, uv);',
+      '}',
+    ].join('\n'),
+    // The vertex shader
+    vert: [
+      'precision highp float;',
+      'attribute vec3 position;',
+      'attribute vec2 uv;',
+      'uniform mat4 projection;',
+      'uniform mat4 view;',
+      'varying vec2 vUv;',
+      'void main() {',
+      '  vUv = uv;',
+      '  gl_Position = projection * view * vec4(position.xyz, 1.0);',
+      '}'
+    ].join('\n'),
+    // The attributes of the mesh, position and uv (texture coordinate)
+    attributes: {
+      position: regl.buffer(sphere.positions),
+      uv: regl.buffer(sphere.uvs)
+    },
+    // The indices of the mesh
+    elements: regl.elements(sphere.cells)
+  });
+
+  var api = createLoop(render);
+
+  api.clearColor = opt.clearColor || clearOpts.color;
+  api.canvas = canvas;
+  api.enableControls = controls.enable;
+  api.disableControls = controls.disable;
+  api.destroy = destroy;
+  api.render = render;
+
+  api.texture = function (opt) {
+    texture(getTextureParams(opt));
   };
 
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-  setupGrabCursor();
-  return canvas;
-}
+  api.controls = controls;
+  api.camera = camera;
+  api.gl = gl;
 
-function getImageURL () {
-  // Choose a large texture size based on our GPU
-  const maxTextureSize = getMaxTextureSize();
-  let imageUrl = 'pano_2048.jpg';
-  if (maxTextureSize >= 7000) imageUrl = 'pano_7000.jpg';
-  else if (maxTextureSize >= 4096) imageUrl = 'pano_4096.jpg';
-  return imageUrl;
-}
+  // render first frame
+  render();
 
-function setupDragDrop (canvas, viewer) {
-  dragDrop(canvas, {
-    onDragEnter: () => {
-      dropRegion.style.display = '';
-    },
-    onDragLeave: () => {
-      dropRegion.style.display = 'none';
-    },
-    onDrop: (files) => {
-      var img = new Image();
-      img.onload = () => {
-        viewer.texture(img);
-      };
-      img.onerror = () => {
-        alert('Could not load image!');
-      };
-      img.crossOrigin = 'Anonymous';
-      img.src = URL.createObjectURL(files[0]);
+  return api;
+
+  function getTextureParams (image) {
+    var defaults = {
+      min: 'linear',
+      mag: 'linear'
+    };
+    if (image instanceof Image || image instanceof HTMLImageElement ||
+      image instanceof HTMLMediaElement || image instanceof HTMLVideoElement) {
+      var size = image.width * image.height;
+      return assign(defaults, {
+        data: size > 0 ? image : null
+      });
+    } else {
+      return assign(defaults, image);
     }
-  });
+  }
+
+  function destroy () {
+    destroyed = true;
+    api.stop();
+    controls.disable();
+    regl.destroy();
+  }
+
+  function render () {
+    if (destroyed) return;
+
+    // poll for GL changes
+    regl.poll()
+
+    var width = gl.drawingBufferWidth;
+    var height = gl.drawingBufferHeight;
+
+    // clear contents of the drawing buffer
+    clearOpts.color = api.clearColor;
+    regl.clear(clearOpts);
+
+    // update input controls and copy into our perspective camera
+    controls.update();
+    controls.copyInto(camera.position, camera.direction, camera.up);
+
+    // update camera viewport and matrices
+    camera.viewport[0] = 0;
+    camera.viewport[1] = 0;
+    camera.viewport[2] = width;
+    camera.viewport[3] = height;
+    camera.update();
+
+    // draw our 360 sphere with the new camera matrices
+    drawMesh({
+      projection: camera.projection,
+      view: camera.view
+    });
+
+    // flush all pending webgl calls
+    gl.flush()
+  }
 }
