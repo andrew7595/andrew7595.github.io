@@ -6,26 +6,50 @@
 <title>PDF 閱讀器</title>
 
 <style>
-  body {
+  html, body {
     margin: 0;
-    display: flex;
-    height: 100vh;
+    padding: 0;
+    height: 100%;
     font-family: Arial, sans-serif;
   }
 
+  body {
+    display: flex;
+    height: 100vh;
+  }
+
+  /* 左側目錄 */
   #sidebar {
     width: 220px;
     background: #1f1f1f;
     color: white;
     padding: 16px;
     box-sizing: border-box;
+    overflow-y: auto;      /* 可上下滑動 */
+    height: 100vh;
+  }
+
+  #sidebar h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 18px;
   }
 
   #sidebar button {
     width: 100%;
-    margin-bottom: 8px;
-    padding: 8px;
+    margin-bottom: 6px;
+    padding: 6px;
     cursor: pointer;
+    border: none;
+    background: #333;
+    color: white;
+    font-size: 14px;
+    text-align: left;
+  }
+
+  #sidebar button.active {
+    background: #0066cc;
+    color: white;
   }
 
   #currentPage {
@@ -34,9 +58,10 @@
     opacity: 0.8;
   }
 
+  /* 右側 PDF */
   #viewer {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: auto; 
     background: #777;
     padding: 10px;
     box-sizing: border-box;
@@ -66,14 +91,45 @@
 
 <div id="sidebar">
   <h3>黃柏瑞</h3>
-  <button onclick="scrollToPage(1)">封面</button>
-  <button onclick="scrollToPage(2)">自我介紹</button>
-  <button onclick="scrollToPage(3)">工作經歷</button>
-  <button onclick="scrollToPage(4)">專案經歷</button>  <button onclick="scrollToPage(5)">展演製作類</button>  <button onclick="scrollToPage(6)">侏儸紀大冒險-體感遊戲</button>  <button onclick="scrollToPage(7)">絕不低頭-陳篡地傳-文學腳本佳作</button>
-</button>  <button onclick="scrollToPage(8)">台中國家歌劇院-翩翩、光影鐘WEBVR</button></button>  <button onclick="scrollToPage(9)">台南左鎮化石園區-投影挖掘、著色紙</button></button>  <button onclick="scrollToPage(10)">台南左鎮化石園區-互動投影、浮空投影</button></button>  <button onclick="scrollToPage(11)">基隆海科館-板塊移動學說</button></button>  <button onclick="scrollToPage(12)">基隆海科館-六大時代AR</button></button>  <button onclick="scrollToPage(13)">台南左鎮化石園區-沉浸劇場</button></button>  <button onclick="scrollToPage(14)">嘉義博物館-QA互動螢幕</button></button>  <button onclick="scrollToPage(15)">嘉義博物館-體感遊戲</button></button>  <button onclick="scrollToPage(16)">新北十三行-八里時光機</button></button>  <button onclick="scrollToPage(17)">3D製作類</button></button>  <button onclick="scrollToPage(18)">NFT區塊練遊戲</button>
-</button>  <button onclick="scrollToPage(19)">神明系列Q版</button></button>  <button onclick="scrollToPage(20)">室內及建築場景</button></button>  <button onclick="scrollToPage(21)">景美人權園區</button></button>  <button onclick="scrollToPage(22)">手機遊戲製作</button></button>  <button onclick="scrollToPage(23)">3D動畫類</button></button>  <button onclick="scrollToPage(24)">3D裸視製作</button></button>  <button onclick="scrollToPage(25)">科技肥料廠</button></button>  <button onclick="scrollToPage(26)">品酒動畫</button></button>  <button onclick="scrollToPage(27)">虛擬實境、擴增實境類</button></button>  <button onclick="scrollToPage(28)">教育部MR教材</button></button>  <button onclick="scrollToPage(29)">地震、火災逃生訓練</button></button>  <button onclick="scrollToPage(30)">華視兒童周刊</button></button>  <button onclick="scrollToPage(31)">CARDBOARD WEBVR</button></button>  <button onclick="scrollToPage(32)">儒鴻湖邊VIP虛擬展間</button></button>  <button onclick="scrollToPage(33)">IOT類</button></button>  <button onclick="scrollToPage(34)">東元電子</button>
-<button onclick="scrollToPage(35)">微智安聯</button>
-<button onclick="scrollToPage(36)">感謝閱讀</button>
+  <!-- 左側按鈕 -->
+  <div id="menuButtons">
+    <button data-page="1">封面</button>
+    <button data-page="2">自我介紹</button>
+    <button data-page="3">工作經歷</button>
+    <button data-page="4">專案經歷</button>
+    <button data-page="5">展演製作類</button>
+    <button data-page="6">侏儸紀大冒險-體感遊戲</button>
+    <button data-page="7">絕不低頭-陳篡地傳-文學腳本佳作</button>
+    <button data-page="8">台中國家歌劇院-翩翩、光影鐘WEBVR</button>
+    <button data-page="9">台南左鎮化石園區-投影挖掘、著色紙</button>
+    <button data-page="10">台南左鎮化石園區-互動投影、浮空投影</button>
+    <button data-page="11">基隆海科館-板塊移動學說</button>
+    <button data-page="12">基隆海科館-六大時代AR</button>
+    <button data-page="13">台南左鎮化石園區-沉浸劇場</button>
+    <button data-page="14">嘉義博物館-QA互動螢幕</button>
+    <button data-page="15">嘉義博物館-體感遊戲</button>
+    <button data-page="16">新北十三行-八里時光機</button>
+    <button data-page="17">3D製作類</button>
+    <button data-page="18">NFT區塊練遊戲</button>
+    <button data-page="19">神明系列Q版</button>
+    <button data-page="20">室內及建築場景</button>
+    <button data-page="21">景美人權園區</button>
+    <button data-page="22">手機遊戲製作</button>
+    <button data-page="23">3D動畫類</button>
+    <button data-page="24">3D裸視製作</button>
+    <button data-page="25">科技肥料廠</button>
+    <button data-page="26">品酒動畫</button>
+    <button data-page="27">虛擬實境、擴增實境類</button>
+    <button data-page="28">教育部MR教材</button>
+    <button data-page="29">地震、火災逃生訓練</button>
+    <button data-page="30">華視兒童周刊</button>
+    <button data-page="31">CARDBOARD WEBVR</button>
+    <button data-page="32">儒鴻湖邊VIP虛擬展間</button>
+    <button data-page="33">IOT類</button>
+    <button data-page="34">東元電子</button>
+    <button data-page="35">微智安聯</button>
+    <button data-page="36">感謝閱讀</button>
+  </div>
 
   <div id="currentPage">目前頁碼：1</div>
 </div>
@@ -81,78 +137,97 @@
 <div id="viewer"></div>
 
 <script type="module">
-  import * as pdfjsLib from './build/pdf.mjs';
-  pdfjsLib.GlobalWorkerOptions.workerSrc = './build/pdf.worker.mjs';
+import * as pdfjsLib from './build/pdf.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc = './build/pdf.worker.mjs';
 
-  const url = './document.pdf';
-  const viewer = document.getElementById('viewer');
-  const currentPageLabel = document.getElementById('currentPage');
+const url = './document.pdf';
+const viewer = document.getElementById('viewer');
+const currentPageLabel = document.getElementById('currentPage');
+const menuButtons = document.querySelectorAll('#menuButtons button');
 
-  let pdfDoc = null;
-  let pageCanvases = [];
+let pdfDoc = null;
+let pageCanvases = [];
 
-  function getScale(page) {
-    const viewport = page.getViewport({ scale: 1 });
-    const containerWidth = viewer.clientWidth - 20;
-    return containerWidth / viewport.width;
+function getScale(page) {
+  const viewport = page.getViewport({ scale: 1 });
+  const containerWidth = viewer.clientWidth - 20;
+  return containerWidth / viewport.width;
+}
+
+async function renderAllPages() {
+  viewer.innerHTML = '';
+  pageCanvases = [];
+
+  for (let i = 1; i <= pdfDoc.numPages; i++) {
+    const page = await pdfDoc.getPage(i);
+    const scale = getScale(page);
+    const viewport = page.getViewport({ scale });
+
+    const pageDiv = document.createElement('div');
+    pageDiv.className = 'page';
+    pageDiv.dataset.pageNumber = i;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    await page.render({
+      canvasContext: ctx,
+      viewport
+    }).promise;
+
+    pageDiv.appendChild(canvas);
+    viewer.appendChild(pageDiv);
+
+    pageCanvases.push(pageDiv);
   }
+}
 
-  async function renderAllPages() {
-    viewer.innerHTML = '';
-    pageCanvases = [];
+// 左側按鈕跳到右側頁面
+function scrollToPage(num) {
+  const target = pageCanvases[num - 1];
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth' });
+  }
+}
 
-    for (let i = 1; i <= pdfDoc.numPages; i++) {
-      const page = await pdfDoc.getPage(i);
-      const scale = getScale(page);
-      const viewport = page.getViewport({ scale });
-
-      const pageDiv = document.createElement('div');
-      pageDiv.className = 'page';
-      pageDiv.dataset.pageNumber = i;
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-
-      await page.render({
-        canvasContext: ctx,
-        viewport
-      }).promise;
-
-      pageDiv.appendChild(canvas);
-      viewer.appendChild(pageDiv);
-
-      pageCanvases.push(pageDiv);
+// 偵測目前頁碼並更新左側高亮
+function detectCurrentPage() {
+  let current = 1;
+  for (const pageDiv of pageCanvases) {
+    const rect = pageDiv.getBoundingClientRect();
+    if (rect.top >= 0 && rect.top < window.innerHeight / 2) {
+      current = parseInt(pageDiv.dataset.pageNumber);
+      break;
     }
   }
 
-  function scrollToPage(num) {
-    const target = pageCanvases[num - 1];
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
+  currentPageLabel.textContent = `目前頁碼：${current}`;
 
-  function detectCurrentPage() {
-    let current = 1;
-    for (const pageDiv of pageCanvases) {
-      const rect = pageDiv.getBoundingClientRect();
-      if (rect.top >= 0 && rect.bottom > window.innerHeight * 0.3) {
-        current = parseInt(pageDiv.dataset.pageNumber);
-        break;
-      }
-    }
-    currentPageLabel.textContent = `目前頁碼：${current}`;
-  }
+  // 高亮對應左側按鈕
+  menuButtons.forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.page) === current);
+  });
+}
 
-  viewer.addEventListener('scroll', detectCurrentPage);
-  window.addEventListener('resize', () => renderAllPages());
+// 為左側按鈕綁定跳頁事件
+menuButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const pageNum = parseInt(btn.dataset.page);
+    scrollToPage(pageNum);
+  });
+});
 
+viewer.addEventListener('scroll', detectCurrentPage);
+window.addEventListener('resize', () => renderAllPages());
+
+(async () => {
   const loadingTask = pdfjsLib.getDocument(url);
   pdfDoc = await loadingTask.promise;
   await renderAllPages();
+})();
 </script>
 
 </body>
