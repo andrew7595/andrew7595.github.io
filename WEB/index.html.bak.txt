@@ -66,21 +66,9 @@
 
 <div id="sidebar">
   <h3>目錄</h3>
-  <button onclick="scrollToPage(1)">封面</button>
-  <button onclick="scrollToPage(2)">自我介紹</button>
-  <button onclick="scrollToPage(3)">工作經歷</button>
-  <button onclick="scrollToPage(4)">專案經歷</button>  <button onclick="scrollToPage(5)">展演製作類</button>  <button onclick="scrollToPage(6)">侏儸紀大冒險-體感遊戲</button>  <button onclick="scrollToPage(7)">絕不低頭-陳篡地傳-文學腳本佳作</button>
-</button>  <button onclick="scrollToPage(8)">台中國家歌劇院-翩翩、光影鐘WEBVR</button></button>  <button onclick="scrollToPage(9)">台南左鎮化石園區-投影挖掘、著色紙</button></button>  <button onclick="scrollToPage(10)">台南左鎮化石園區-互動投影、浮空投影</button></button>  <button onclick="scrollToPage(11)">基隆海科館-板塊移動學說</button></button>  <button onclick="scrollToPage(12)">基隆海科館-六大時代AR</button></button>  <button onclick="scrollToPage(13)">台南左鎮化石園區-沉浸劇場</button></button>  <button onclick="scrollToPage(14)">嘉義博物館-QA互動螢幕</button></button>  <button onclick="scrollToPage(15)">嘉義博物館-體感遊戲</button></button>  <button onclick="scrollToPage(16)">新北十三行-八里時光機</button></button>  <button onclick="scrollToPage(17)">3D製作類</button></button>  <button onclick="scrollToPage(18)">NFT區塊練遊戲</button>
-</button>  <button onclick="scrollToPage(19)">神明系列Q版</button></button>  <button onclick="scrollToPage(20)">室內及建築場景</button></button>  <button onclick="scrollToPage(21)">景美人權園區</button></button>  <button onclick="scrollToPage(22)">手機遊戲製作</button></button>  <button onclick="scrollToPage(23)">3D動畫類</button></button>  <button onclick="scrollToPage(24)">3D裸視製作</button></button>  <button onclick="scrollToPage(25)">科技肥料廠</button></button>  <button onclick="scrollToPage(26)">品酒動畫</button></button>  <button onclick="scrollToPage(27)">虛擬實境、擴增實境類</button></button>  <button onclick="scrollToPage(28)">教育部MR教材</button></button>  <button onclick="scrollToPage(29)">地震、火災逃生訓練</button></button>  <button onclick="scrollToPage(30)">華視兒童周刊</button></button>  <button onclick="scrollToPage(31)">CARDBOARD WEBVR</button></button>  <button onclick="scrollToPage(32)">儒鴻湖邊VIP虛擬展間</button></button>  <button onclick="scrollToPage(33)">IOT類</button></button>  <button onclick="scrollToPage(34)">東元電子</button>
-<button onclick="scrollToPage(35)">微智安聯</button>
-<button onclick="scrollToPage(36)">感謝閱讀</button>
-
-//<button //onclick="scrollToPage(1)"//>封面</button>
-
-
-
-
-
+  <button onclick="scrollToPage(1)">第 1 頁</button>
+  <button onclick="scrollToPage(5)">第 5 頁</button>
+  <button onclick="scrollToPage(10)">第 10 頁</button>
   <div id="currentPage">目前頁碼：1</div>
 </div>
 
