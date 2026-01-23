@@ -1,2 +1,8 @@
-[長廊]
+[恐怖長廊]-長廊有鬼在前面靠近你
 https://andrew7595.github.io/ST114/HORROR/
+
+[監獄]-圍起來的監獄有窗
+https://andrew7595.github.io/ST114/JAIL/
+
+[湖邊騎車]-畫面不會轉
+https://andrew7595.github.io/ST114/LAKEBIKING/
