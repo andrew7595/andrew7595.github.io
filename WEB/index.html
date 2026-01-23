@@ -2,7 +2,8 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<title>PDF 目錄檢視</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF 閱讀器</title>
 
 <style>
   body {
@@ -27,17 +28,36 @@
     cursor: pointer;
   }
 
+  #currentPage {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
   #viewer {
     flex: 1;
-    overflow: auto;
-    background: #666;
+    overflow-y: auto;
+    background: #777;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .page {
     display: flex;
     justify-content: center;
+    margin-bottom: 20px;
   }
 
   canvas {
-    margin: 20px 0;
     background: white;
+  }
+
+  /* 手機優化 */
+  @media (max-width: 768px) {
+    #sidebar {
+      width: 120px;
+      font-size: 14px;
+    }
   }
 </style>
 </head>
@@ -46,48 +66,87 @@
 
 <div id="sidebar">
   <h3>目錄</h3>
-  <button onclick="goPage(1)">第 1 頁</button>
-  <button onclick="goPage(5)">第 5 頁</button>
-  <button onclick="goPage(10)">第 10 頁</button>
+  <button onclick="scrollToPage(1)">第 1 頁</button>
+  <button onclick="scrollToPage(5)">第 5 頁</button>
+  <button onclick="scrollToPage(10)">第 10 頁</button>
+  <div id="currentPage">目前頁碼：1</div>
 </div>
 
-<div id="viewer">
-  <canvas id="pdfCanvas"></canvas>
-</div>
+<div id="viewer"></div>
 
 <script type="module">
   import * as pdfjsLib from './build/pdf.mjs';
-
-  // ⚠️ 這一行是關鍵
   pdfjsLib.GlobalWorkerOptions.workerSrc = './build/pdf.worker.mjs';
 
   const url = './document.pdf';
+  const viewer = document.getElementById('viewer');
+  const currentPageLabel = document.getElementById('currentPage');
+
   let pdfDoc = null;
-  let pageNum = 1;
-  const scale = 1.3;
-  const canvas = document.getElementById('pdfCanvas');
-  const ctx = canvas.getContext('2d');
+  let pageCanvases = [];
 
-  async function renderPage(num) {
-    const page = await pdfDoc.getPage(num);
-    const viewport = page.getViewport({ scale });
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-
-    await page.render({
-      canvasContext: ctx,
-      viewport: viewport
-    }).promise;
+  function getScale(page) {
+    const viewport = page.getViewport({ scale: 1 });
+    const containerWidth = viewer.clientWidth - 20;
+    return containerWidth / viewport.width;
   }
 
-  window.goPage = async function(num) {
-    pageNum = num;
-    await renderPage(pageNum);
+  async function renderAllPages() {
+    viewer.innerHTML = '';
+    pageCanvases = [];
+
+    for (let i = 1; i <= pdfDoc.numPages; i++) {
+      const page = await pdfDoc.getPage(i);
+      const scale = getScale(page);
+      const viewport = page.getViewport({ scale });
+
+      const pageDiv = document.createElement('div');
+      pageDiv.className = 'page';
+      pageDiv.dataset.pageNumber = i;
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      await page.render({
+        canvasContext: ctx,
+        viewport
+      }).promise;
+
+      pageDiv.appendChild(canvas);
+      viewer.appendChild(pageDiv);
+
+      pageCanvases.push(pageDiv);
+    }
   }
+
+  function scrollToPage(num) {
+    const target = pageCanvases[num - 1];
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  function detectCurrentPage() {
+    let current = 1;
+    for (const pageDiv of pageCanvases) {
+      const rect = pageDiv.getBoundingClientRect();
+      if (rect.top >= 0 && rect.bottom > window.innerHeight * 0.3) {
+        current = parseInt(pageDiv.dataset.pageNumber);
+        break;
+      }
+    }
+    currentPageLabel.textContent = `目前頁碼：${current}`;
+  }
+
+  viewer.addEventListener('scroll', detectCurrentPage);
+  window.addEventListener('resize', () => renderAllPages());
 
   const loadingTask = pdfjsLib.getDocument(url);
   pdfDoc = await loadingTask.promise;
-  renderPage(pageNum);
+  await renderAllPages();
 </script>
 
 </body>
