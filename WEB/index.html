@@ -1,12 +1,95 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
-  <title>頁面轉址中…</title>
-  <!-- 立即轉址：content="0; url=目標網址" -->
-  <meta http-equiv="refresh" content="0; url=https://magichat2016.wixsite.com/website" />
+  <meta charset="utf-8">
+  <title>PDF 文件閱讀系統</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      font-family: Arial, "Microsoft JhengHei", sans-serif;
+    }
+
+    /* 左側目錄 */
+    .sidebar {
+      width: 280px;
+      background: #f4f4f4;
+      border-right: 1px solid #ccc;
+      padding: 16px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 6px 0;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .sidebar a:hover {
+      color: #0066cc;
+    }
+
+    /* 右側 PDF */
+    .content {
+      flex: 1;
+      height: 100%;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
 </head>
+
 <body>
-  <p>若瀏覽器未自動轉址，請點 <a href="https://magichat2016.wixsite.com/website">這裡</a>。</p>
+
+  <!-- 左側目錄 -->
+  <div class="sidebar">
+    <h2>目錄</h2>
+
+    <a href="pdfjs/web/viewer.html?file=../../document.pdf#page=1" target="pdf">
+      封面
+    </a>
+
+    <a href="pdfjs/web/viewer.html?file=../../document.pdf#page=3" target="pdf">
+      前言
+    </a>
+
+    <a href="pdfjs/web/viewer.html?file=../../document.pdf#page=6" target="pdf">
+      第一章：研究背景
+    </a>
+
+    <a href="pdfjs/web/viewer.html?file=../../document.pdf#page=15" target="pdf">
+      第二章：方法說明
+    </a>
+
+    <a href="pdfjs/web/viewer.html?file=../../document.pdf#page=30" target="pdf">
+      第三章：實驗結果
+    </a>
+
+    <a href="pdfjs/web/viewer.html?file=../../document.pdf#page=45" target="pdf">
+      結論
+    </a>
+  </div>
+
+  <!-- 右側 PDF.js -->
+  <div class="content">
+    <iframe
+      name="pdf"
+      src="pdfjs/web/viewer.html?file=../../document.pdf#page=1">
+    </iframe>
+  </div>
+
 </body>
 </html>
