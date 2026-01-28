@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>黃柏瑞作品集<br>2026.01.28</title>
+<title>黃柏瑞作品集-2026.01.28</title>
 
 <style>
   html, body {
@@ -18,14 +18,13 @@
     height: 100vh;
   }
 
-  /* 左側目錄 */
   #sidebar {
     width: 220px;
     background: #1f1f1f;
     color: white;
     padding: 16px;
     box-sizing: border-box;
-    overflow-y: auto;      /* 可上下滑動 */
+    overflow-y: auto;
     height: 100vh;
   }
 
@@ -50,7 +49,6 @@
 
   #sidebar button.active {
     background: #0066cc;
-    color: white;
   }
 
   #currentPage {
@@ -59,10 +57,9 @@
     opacity: 0.8;
   }
 
-  /* 右側 PDF */
   #viewer {
     flex: 1;
-    overflow-y: auto; 
+    overflow-y: auto;
     background: #777;
     padding: 10px;
     box-sizing: border-box;
@@ -78,7 +75,6 @@
     background: white;
   }
 
-  /* 手機優化 */
   @media (max-width: 768px) {
     #sidebar {
       width: 120px;
@@ -91,9 +87,9 @@
 <body>
 
 <div id="sidebar">
-  <h3>黃柏瑞</h3>
-  <!-- 左側按鈕 -->
+  <h3>黃柏瑞<br>2026.01.28</h3>
   <div id="menuButtons">
+    <!-- (你的按鈕列表保持不變) -->
     <button data-page="1">封面</button>
     <button data-page="2">自我介紹</button>
     <button data-page="3">工作經歷</button>
@@ -131,7 +127,6 @@
     <button data-page="35">微智安聯</button>
     <button data-page="36">感謝閱讀</button>
   </div>
-
   <div id="currentPage">目前頁碼：1</div>
 </div>
 
@@ -148,6 +143,7 @@ const menuButtons = document.querySelectorAll('#menuButtons button');
 
 let pdfDoc = null;
 let pageCanvases = [];
+let manualScrolling = false; // ⭐ 關鍵變數
 
 function getScale(page) {
   const viewport = page.getViewport({ scale: 1 });
@@ -171,31 +167,33 @@ async function renderAllPages() {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+    const outputScale = window.devicePixelRatio || 1;
+    canvas.width = viewport.width * outputScale;
+    canvas.height = viewport.height * outputScale;
+    canvas.style.width = viewport.width + "px";
+    canvas.style.height = viewport.height + "px";
+    ctx.setTransform(outputScale, 0, 0, outputScale, 0, 0);
 
-    await page.render({
-      canvasContext: ctx,
-      viewport
-    }).promise;
+    await page.render({ canvasContext: ctx, viewport }).promise;
 
     pageDiv.appendChild(canvas);
     viewer.appendChild(pageDiv);
-
     pageCanvases.push(pageDiv);
   }
 }
 
-// 左側按鈕跳到右側頁面
 function scrollToPage(num) {
   const target = pageCanvases[num - 1];
   if (target) {
+    manualScrolling = true; // 暫停自動偵測
     target.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => manualScrolling = false, 700); // 等動畫結束
   }
 }
 
-// 偵測目前頁碼並更新左側高亮
 function detectCurrentPage() {
+  if (manualScrolling) return; // ⭐ 防止搶控制權
+
   let current = 1;
   for (const pageDiv of pageCanvases) {
     const rect = pageDiv.getBoundingClientRect();
@@ -206,18 +204,14 @@ function detectCurrentPage() {
   }
 
   currentPageLabel.textContent = `目前頁碼：${current}`;
-
-  // 高亮對應左側按鈕
   menuButtons.forEach(btn => {
     btn.classList.toggle('active', parseInt(btn.dataset.page) === current);
   });
 }
 
-// 為左側按鈕綁定跳頁事件
 menuButtons.forEach(btn => {
   btn.addEventListener('click', () => {
-    const pageNum = parseInt(btn.dataset.page);
-    scrollToPage(pageNum);
+    scrollToPage(parseInt(btn.dataset.page));
   });
 });
 
