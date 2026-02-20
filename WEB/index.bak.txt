@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PDF 閱讀器</title>
+<title>黃柏瑞作品集-2026.01.28</title>
 
 <style>
   html, body {
@@ -18,21 +18,14 @@
     height: 100vh;
   }
 
-  /* 左側目錄 */
   #sidebar {
     width: 220px;
     background: #1f1f1f;
     color: white;
     padding: 16px;
     box-sizing: border-box;
-    overflow-y: auto;      /* 可上下滑動 */
+    overflow-y: auto;
     height: 100vh;
-    transition: transform 0.3s ease;
-    z-index: 1000;
-  }
-
-  #sidebar.hidden {
-    transform: translateX(-100%);
   }
 
   #sidebar h3 {
@@ -50,28 +43,26 @@
     background: #333;
     color: white;
     font-size: 14px;
-    text-align: left;
+    text-align: center;
+    white-space: normal;
   }
 
   #sidebar button.active {
     background: #0066cc;
-    color: white;
   }
 
-  #sidebar #currentPage {
+  #currentPage {
     margin-top: 12px;
     font-size: 14px;
     opacity: 0.8;
   }
 
-  /* 右側 PDF */
   #viewer {
     flex: 1;
-    overflow-y: auto; 
+    overflow-y: auto;
     background: #777;
     padding: 10px;
     box-sizing: border-box;
-    position: relative;
   }
 
   .page {
@@ -84,29 +75,10 @@
     background: white;
   }
 
-  /* 手機優化 */
   @media (max-width: 768px) {
     #sidebar {
-      width: 180px;
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      transform: translateX(-100%);
-    }
-    #sidebar.show {
-      transform: translateX(0);
-    }
-    #toggleSidebar {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 1100;
-      background: #0066cc;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      cursor: pointer;
+      width: 120px;
+      font-size: 14px;
     }
   }
 </style>
@@ -114,29 +86,26 @@
 
 <body>
 
-<!-- 手機開關按鈕 -->
-<button id="toggleSidebar">目錄</button>
-
 <div id="sidebar">
-  <h3>黃柏瑞</h3>
+  <h3>黃柏瑞<br>2026.01.28</h3>
   <div id="menuButtons">
-    <!-- 左側按鈕 -->
+    <!-- (你的按鈕列表保持不變) -->
     <button data-page="1">封面</button>
     <button data-page="2">自我介紹</button>
     <button data-page="3">工作經歷</button>
     <button data-page="4">專案經歷</button>
     <button data-page="5">展演製作類</button>
-    <button data-page="6">侏儸紀大冒險-體感遊戲</button>
-    <button data-page="7">絕不低頭-陳篡地傳-文學腳本佳作</button>
-    <button data-page="8">台中國家歌劇院-翩翩、光影鐘WEBVR</button>
-    <button data-page="9">台南左鎮化石園區-投影挖掘、著色紙</button>
-    <button data-page="10">台南左鎮化石園區-互動投影、浮空投影</button>
-    <button data-page="11">基隆海科館-板塊移動學說</button>
-    <button data-page="12">基隆海科館-六大時代AR</button>
-    <button data-page="13">台南左鎮化石園區-沉浸劇場</button>
-    <button data-page="14">嘉義博物館-QA互動螢幕</button>
-    <button data-page="15">嘉義博物館-體感遊戲</button>
-    <button data-page="16">新北十三行-八里時光機</button>
+    <button data-page="6">侏儸紀大冒險<br>體感遊戲</button>
+    <button data-page="7">絕不低頭-陳篡地傳<br>文學腳本佳作</button>
+    <button data-page="8">台中國家歌劇院<br>翩翩、光影鐘WEBVR</button>
+    <button data-page="9">台南左鎮化石園區<br>投影挖掘、著色紙</button>
+    <button data-page="10">台南左鎮化石園區<br>互動投影、浮空投影</button>
+    <button data-page="11">基隆海科館<br>板塊移動學說</button>
+    <button data-page="12">基隆海科館<br>六大時代AR</button>
+    <button data-page="13">台南左鎮化石園區<br>沉浸劇場</button>
+    <button data-page="14">嘉義博物館<br>QA互動螢幕</button>
+    <button data-page="15">嘉義博物館<br>體感遊戲</button>
+    <button data-page="16">新北十三行<br>八里時光機</button>
     <button data-page="17">3D製作類</button>
     <button data-page="18">NFT區塊練遊戲</button>
     <button data-page="19">神明系列Q版</button>
@@ -158,7 +127,6 @@
     <button data-page="35">微智安聯</button>
     <button data-page="36">感謝閱讀</button>
   </div>
-
   <div id="currentPage">目前頁碼：1</div>
 </div>
 
@@ -172,16 +140,10 @@ const url = './document.pdf';
 const viewer = document.getElementById('viewer');
 const currentPageLabel = document.getElementById('currentPage');
 const menuButtons = document.querySelectorAll('#menuButtons button');
-const sidebar = document.getElementById('sidebar');
-const toggleBtn = document.getElementById('toggleSidebar');
 
 let pdfDoc = null;
 let pageCanvases = [];
-
-// 手機按鈕切換目錄
-toggleBtn.addEventListener('click', () => {
-  sidebar.classList.toggle('show');
-});
+let manualScrolling = false; // ⭐ 關鍵變數
 
 function getScale(page) {
   const viewport = page.getViewport({ scale: 1 });
@@ -205,31 +167,33 @@ async function renderAllPages() {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+    const outputScale = window.devicePixelRatio || 1;
+    canvas.width = viewport.width * outputScale;
+    canvas.height = viewport.height * outputScale;
+    canvas.style.width = viewport.width + "px";
+    canvas.style.height = viewport.height + "px";
+    ctx.setTransform(outputScale, 0, 0, outputScale, 0, 0);
 
-    await page.render({
-      canvasContext: ctx,
-      viewport
-    }).promise;
+    await page.render({ canvasContext: ctx, viewport }).promise;
 
     pageDiv.appendChild(canvas);
     viewer.appendChild(pageDiv);
-
     pageCanvases.push(pageDiv);
   }
 }
 
-// 左側按鈕跳頁
 function scrollToPage(num) {
   const target = pageCanvases[num - 1];
   if (target) {
+    manualScrolling = true; // 暫停自動偵測
     target.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => manualScrolling = false, 700); // 等動畫結束
   }
 }
 
-// 偵測目前頁碼並高亮
 function detectCurrentPage() {
+  if (manualScrolling) return; // ⭐ 防止搶控制權
+
   let current = 1;
   for (const pageDiv of pageCanvases) {
     const rect = pageDiv.getBoundingClientRect();
@@ -240,8 +204,6 @@ function detectCurrentPage() {
   }
 
   currentPageLabel.textContent = `目前頁碼：${current}`;
-
-  // 高亮左側按鈕
   menuButtons.forEach(btn => {
     btn.classList.toggle('active', parseInt(btn.dataset.page) === current);
   });
@@ -249,13 +211,7 @@ function detectCurrentPage() {
 
 menuButtons.forEach(btn => {
   btn.addEventListener('click', () => {
-    const pageNum = parseInt(btn.dataset.page);
-    scrollToPage(pageNum);
-
-    // 手機模式下點擊後自動收合
-    if (window.innerWidth <= 768) {
-      sidebar.classList.remove('show');
-    }
+    scrollToPage(parseInt(btn.dataset.page));
   });
 });
 
