@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | EDGAD6</title>
+    <title>Unity WebGL Player | EDGAD7</title>
     <meta name="description" content="">
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
@@ -24,7 +24,7 @@
         <button id="entervr" value="Enter VR" disabled>雙屏</button>
         <button id="enterar" value="Enter AR" disabled>單屏</button>
         <div id="unity-webxr-link">Teaching by <a href="https://dgad.tumt.edu.tw/" target="_blank" title="熱烈招生中">台北海大-數遊系</a></div>
-        <div id="unity-build-title">EDGAD6</div>
+        <div id="unity-build-title">EDGAD7</div>
       </div>
     </div>
     <script>
@@ -36,7 +36,7 @@
         codeUrl: buildUrl + "/SPACEFIGHTERVR.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "TUMT",
-        productName: "EDGAD6",
+        productName: "EDGAD7",
         productVersion: "0.1.0",
       };
 
@@ -79,9 +79,17 @@
       document.addEventListener('onARSupportedCheck', function (event) {
         enterARButton.disabled = !event.detail.supported;
       }, false);
-      document.addEventListener('onVRSupportedCheck', function (event) {
-        enterVRButton.disabled = !event.detail.supported;
-      }, false);
+        document.addEventListener('onVRSupportedCheck', function (event) {
+            console.log("[WebXR] VR supported:", event.detail.supported);
+
+            enterVRButton.disabled = !event.detail.supported;
+
+            // Mobile fallback:
+            // Keep the Cardboard button available on mobile devices.
+            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                enterVRButton.disabled = false;
+            }
+        }, false);
 
       enterARButton.addEventListener('click', function (event) {
         unityInstance.Module.WebXR.toggleAR();
