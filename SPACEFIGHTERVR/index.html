@@ -1,102 +1,575 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | EDGAD7</title>
-    <meta name="description" content="">
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
+
+    <title>Unity WebGL Player | EDGAD8</title>
+
+    <meta name="description"
+          content="">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <link rel="shortcut icon"
+          href="TemplateData/favicon.ico">
+
+    <link rel="stylesheet"
+          href="TemplateData/style.css">
+</head>
+
+
+<body>
+
     <div id="unity-container">
-      <div id="unity-canvas-container">
-        <canvas id="unity-canvas" style="width: 100%; height: 100%;"></canvas>
-      </div>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
+
+        <div id="unity-canvas-container">
+
+            <canvas id="unity-canvas"
+                    style="width: 100%; height: 100%;"></canvas>
+
         </div>
-      </div>
-      <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <button id="entervr" value="Enter VR" disabled>雙屏</button>
-        <button id="enterar" value="Enter AR" disabled>單屏</button>
-        <div id="unity-webxr-link">Teaching by <a href="https://dgad.tumt.edu.tw/" target="_blank" title="熱烈招生中">台北海大-數遊系</a></div>
-        <div id="unity-build-title">EDGAD7</div>
-      </div>
+
+
+        <div id="unity-loading-bar">
+
+            <div id="unity-logo"></div>
+
+            <div id="unity-progress-bar-empty">
+
+                <div id="unity-progress-bar-full"></div>
+
+            </div>
+
+        </div>
+
+
+        <div id="unity-footer">
+
+            <div id="unity-webgl-logo"></div>
+
+
+            <!--
+              WebXR VR / Cardboard button
+
+              IMPORTANT:
+              This button is NOT permanently disabled.
+
+              On mobile devices it is available immediately,
+              because some browsers / polyfills may not fire
+              onVRSupportedCheck reliably.
+            -->
+
+            <button id="entervr"
+                    value="Enter VR"
+                    type="button">
+                雙屏
+            </button>
+
+
+            <!-- AR button -->
+
+            <button id="enterar"
+                    value="Enter AR"
+                    type="button"
+                    disabled>
+                單屏
+            </button>
+
+
+            <div id="unity-webxr-link">
+
+                Teaching by
+
+                <a href="https://dgad.tumt.edu.tw/"
+                   target="_blank"
+                   title="熱烈招生中">
+                    台北海大-數遊系
+                </a>
+
+            </div>
+
+
+            <div id="unity-build-title">
+                EDGAD8
+            </div>
+
+        </div>
+
     </div>
+
+
     <script>
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/SPACEFIGHTERVR.loader.js";
-      var config = {
-        dataUrl: buildUrl + "/SPACEFIGHTERVR.data.unityweb",
-        frameworkUrl: buildUrl + "/SPACEFIGHTERVR.framework.js.unityweb",
-        codeUrl: buildUrl + "/SPACEFIGHTERVR.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "TUMT",
-        productName: "EDGAD7",
-        productVersion: "0.1.0",
-      };
 
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var canvasContainer = document.querySelector("#unity-canvas-container");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var unityInstance = null;
-      
+    // =====================================================
+    // Unity WebGL configuration
+    // =====================================================
 
-      canvasContainer.style.width = "960px";
-      canvasContainer.style.height = "600px";
-      loadingBar.style.display = "block";
+    var buildUrl = "Build";
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
-        }).then((instance) => {
-          unityInstance = instance;
-          loadingBar.style.display = "none";
-          if (fullscreenButton)
+
+    var loaderUrl =
+      buildUrl +
+      "/SPACEFIGHTERVR.loader.js";
+
+
+    var config = {
+
+      dataUrl:
+        buildUrl +
+        "/SPACEFIGHTERVR.data.unityweb",
+
+      frameworkUrl:
+        buildUrl +
+        "/SPACEFIGHTERVR.framework.js.unityweb",
+
+      codeUrl:
+        buildUrl +
+        "/SPACEFIGHTERVR.wasm.unityweb",
+
+
+
+      streamingAssetsUrl:
+        "StreamingAssets",
+
+      companyName:
+        "TUMT",
+
+      productName:
+        "EDGAD8",
+
+      productVersion:
+        "0.1.0"
+    };
+
+
+    // =====================================================
+    // DOM elements
+    // =====================================================
+
+    var container =
+      document.querySelector("#unity-container");
+
+
+    var canvas =
+      document.querySelector("#unity-canvas");
+
+
+    var canvasContainer =
+      document.querySelector("#unity-canvas-container");
+
+
+    var loadingBar =
+      document.querySelector("#unity-loading-bar");
+
+
+    var progressBarFull =
+      document.querySelector("#unity-progress-bar-full");
+
+
+    var fullscreenButton =
+      document.querySelector("#unity-fullscreen-button");
+
+
+    var unityInstance =
+      null;
+
+
+    var enterVRButton =
+      document.getElementById("entervr");
+
+
+    var enterARButton =
+      document.getElementById("enterar");
+
+
+    // =====================================================
+    // WebXR Polyfill
+    // =====================================================
+
+    
+
+
+    // =====================================================
+    // Canvas size
+    // =====================================================
+
+    canvasContainer.style.width =
+      "960px";
+
+
+    canvasContainer.style.height =
+      "600px";
+
+
+
+
+    loadingBar.style.display =
+      "block";
+
+
+    // =====================================================
+    // Device detection
+    // =====================================================
+
+    var isMobileDevice =
+      /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(
+        navigator.userAgent
+      );
+
+
+    console.log(
+      "[WebXR] Mobile device:",
+      isMobileDevice
+    );
+
+
+    // =====================================================
+    // VR button state
+    //
+    // IMPORTANT:
+    //
+    // Mobile:
+    // Always enable the button.
+    //
+    // Desktop:
+    // Wait for WebXR support detection.
+    // =====================================================
+
+    if (isMobileDevice)
+    {
+      enterVRButton.disabled =
+        false;
+
+      console.log(
+        "[WebXR] Mobile VR/Cardboard button enabled."
+      );
+    }
+    else
+    {
+      enterVRButton.disabled =
+        true;
+
+      console.log(
+        "[WebXR] Desktop VR button waiting for support check."
+      );
+    }
+
+
+    // =====================================================
+    // Load Unity
+    // =====================================================
+
+    var script =
+      document.createElement("script");
+
+
+    script.src =
+      loaderUrl;
+
+
+    script.onload =
+      () =>
+      {
+
+        createUnityInstance(
+          canvas,
+          config,
+
+          (progress) =>
           {
-            fullscreenButton.onclick = () => {
-              unityInstance.SetFullscreen(1);
-            };
+            progressBarFull.style.width =
+              100 * progress + "%";
           }
-        }).catch((message) => {
-          alert(message);
-        });
-      };
-      document.body.appendChild(script);
 
-      let enterARButton = document.getElementById('enterar');
-      let enterVRButton = document.getElementById('entervr');
+        ).then(
 
-      document.addEventListener('onARSupportedCheck', function (event) {
-        enterARButton.disabled = !event.detail.supported;
-      }, false);
-        document.addEventListener('onVRSupportedCheck', function (event) {
-            console.log("[WebXR] VR supported:", event.detail.supported);
+          (instance) =>
+          {
 
-            enterVRButton.disabled = !event.detail.supported;
+            unityInstance =
+              instance;
 
-            // Mobile fallback:
-            // Keep the Cardboard button available on mobile devices.
-            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                enterVRButton.disabled = false;
+
+            loadingBar.style.display =
+              "none";
+
+
+            console.log(
+              "[Unity] Unity instance ready."
+            );
+
+
+            // -------------------------------------------------
+            // Fullscreen
+            // -------------------------------------------------
+
+            if (fullscreenButton)
+            {
+              fullscreenButton.onclick =
+                () =>
+                {
+                  unityInstance.SetFullscreen(1);
+                };
             }
-        }, false);
 
-      enterARButton.addEventListener('click', function (event) {
-        unityInstance.Module.WebXR.toggleAR();
-      }, false);
-      enterVRButton.addEventListener('click', function (event) {
-        unityInstance.Module.WebXR.toggleVR();
-      }, false);
+          }
+
+        ).catch(
+
+          (message) =>
+          {
+            console.error(
+              "[Unity] Failed to create Unity instance:",
+              message
+            );
+
+            alert(message);
+          }
+
+        );
+
+      };
+
+
+    document.body.appendChild(
+      script
+    );
+
+
+    // =====================================================
+    // WebXR support detection
+    //
+    // NOTE:
+    //
+    // Do NOT disable the mobile Cardboard button here.
+    // =====================================================
+
+    document.addEventListener(
+      "onVRSupportedCheck",
+
+      function(event)
+      {
+
+        var supported =
+          event &&
+          event.detail &&
+          event.detail.supported;
+
+
+        console.log(
+          "[WebXR] onVRSupportedCheck:",
+          supported
+        );
+
+
+        // Desktop:
+        // Follow actual support status.
+
+        if (!isMobileDevice)
+        {
+          enterVRButton.disabled =
+            !supported;
+        }
+
+
+        // Mobile:
+        // Keep button enabled even if the support
+        // detection reports false.
+
+        else
+        {
+          enterVRButton.disabled =
+            false;
+        }
+
+      },
+
+      false
+    );
+
+
+    // =====================================================
+    // AR support detection
+    // =====================================================
+
+    document.addEventListener(
+      "onARSupportedCheck",
+
+      function(event)
+      {
+
+        var supported =
+          event &&
+          event.detail &&
+          event.detail.supported;
+
+
+        console.log(
+          "[WebXR] onARSupportedCheck:",
+          supported
+        );
+
+
+        enterARButton.disabled =
+          !supported;
+
+      },
+
+      false
+    );
+
+
+    // =====================================================
+    // ENTER VR / CARDBOARD
+    // =====================================================
+
+    enterVRButton.addEventListener(
+      "click",
+
+      function(event)
+      {
+
+        console.log(
+          "[WebXR] VR button clicked."
+        );
+
+
+        // -------------------------------------------------
+        // Unity must already be loaded
+        // -------------------------------------------------
+
+        if (!unityInstance)
+        {
+          console.warn(
+            "[WebXR] Unity instance is not ready yet."
+          );
+
+          return;
+        }
+
+
+        // -------------------------------------------------
+        // Check WebXR API bridge
+        // -------------------------------------------------
+
+        if (
+          !unityInstance.Module ||
+          !unityInstance.Module.WebXR
+        )
+        {
+          console.error(
+            "[WebXR] Unity WebXR module is unavailable."
+          );
+
+          return;
+        }
+
+
+        console.log(
+          "[WebXR] Calling toggleVR()."
+        );
+
+
+        try
+        {
+          unityInstance.Module.WebXR.toggleVR();
+        }
+
+        catch(error)
+        {
+          console.error(
+            "[WebXR] toggleVR() failed:",
+            error
+          );
+        }
+
+      },
+
+      false
+    );
+
+
+    // =====================================================
+    // ENTER AR
+    // =====================================================
+
+    enterARButton.addEventListener(
+      "click",
+
+      function(event)
+      {
+
+        console.log(
+          "[WebXR] AR button clicked."
+        );
+
+
+        if (!unityInstance)
+        {
+          console.warn(
+            "[WebXR] Unity instance is not ready yet."
+          );
+
+          return;
+        }
+
+
+        if (
+          !unityInstance.Module ||
+          !unityInstance.Module.WebXR
+        )
+        {
+          console.error(
+            "[WebXR] Unity WebXR module is unavailable."
+          );
+
+          return;
+        }
+
+
+        try
+        {
+          unityInstance.Module.WebXR.toggleAR();
+        }
+
+        catch(error)
+        {
+          console.error(
+            "[WebXR] toggleAR() failed:",
+            error
+          );
+        }
+
+      },
+
+      false
+    );
+
+
+    // =====================================================
+    // Debug information
+    // =====================================================
+
+    console.log(
+      "[WebXR] Template initialized."
+    );
+
+    console.log(
+      "[WebXR] User Agent:",
+      navigator.userAgent
+    );
+
+    console.log(
+      "[WebXR] navigator.xr:",
+      navigator.xr
+    );
+
+
     </script>
-  </body>
+
+</body>
+
 </html>
