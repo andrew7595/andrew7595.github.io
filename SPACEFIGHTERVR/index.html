@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <title>Unity WebGL Player | EDGAD_10</title>
+  <title>Unity WebGL Player | EDGAD_11</title>
 
   <link rel="shortcut icon" href="TemplateData/favicon.ico">
   <link rel="stylesheet" href="TemplateData/style.css">
@@ -38,7 +38,8 @@
         </a>
       </div>
 
-      <div id="unity-build-title">EDGAD_10</div>
+      <div id="unity-build-title">EDGAD_11</div>
+      <div id="webxr-status" role="status" aria-live="polite">載入中</div>
 
       <button id="enterar" type="button" value="Enter AR" disabled>單屏</button>
       <button id="entervr" type="button" value="Enter VR" disabled>雙屏</button>
@@ -55,7 +56,7 @@
       codeUrl: buildUrl + "/SPACEFIGHTERVR.wasm.unityweb",
       streamingAssetsUrl: "StreamingAssets",
       companyName: "TUMT",
-      productName: "EDGAD_10",
+      productName: "EDGAD_11",
       productVersion: "0.1.0",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: 1
@@ -68,6 +69,7 @@
     var progressBarFull = document.querySelector("#unity-progress-bar-full");
     var enterVRButton = document.querySelector("#entervr");
     var enterARButton = document.querySelector("#enterar");
+    var webXRStatus = document.querySelector("#webxr-status");
     var unityInstance = null;
 
     var isMobileDevice = /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
@@ -104,6 +106,56 @@
       enterARButton.setAttribute("aria-disabled", enabled ? "false" : "true");
     }
 
+    function setWebXRStatus(message, isError) {
+      if (!webXRStatus) return;
+      webXRStatus.textContent = message;
+      webXRStatus.classList.toggle("error", !!isError);
+      console[isError ? "error" : "log"]("[WebXR] " + message);
+    }
+
+    function getWebXRBridge() {
+      if (!unityInstance || !unityInstance.Module) return null;
+      return unityInstance.Module.WebXR || null;
+    }
+
+    var vrActivationInProgress = false;
+
+    function requestEnterVR() {
+      if (vrActivationInProgress) return;
+
+      var bridge = getWebXRBridge();
+      if (!bridge || typeof bridge.toggleVR !== "function") {
+        setWebXRStatus("VR 模組尚未就緒", true);
+        return;
+      }
+
+      vrActivationInProgress = true;
+      setWebXRStatus("正在啟動雙屏…", false);
+
+      try {
+        // Keep this call synchronous inside the user's pointer gesture.
+        var result = bridge.toggleVR();
+
+        if (result && typeof result.then === "function") {
+          result.then(function () {
+            setWebXRStatus("已送出雙屏請求", false);
+          }).catch(function (error) {
+            vrActivationInProgress = false;
+            setWebXRStatus("雙屏啟動失敗：" + (error && (error.message || error.name) || error), true);
+          });
+        } else {
+          // Some WebXR Export versions return void. Release the guard shortly
+          // so the user can retry if the browser declines the session.
+          setTimeout(function () {
+            vrActivationInProgress = false;
+          }, 1200);
+        }
+      } catch (error) {
+        vrActivationInProgress = false;
+        setWebXRStatus("雙屏啟動失敗：" + (error && (error.message || error.name) || error), true);
+      }
+    }
+
     document.addEventListener("onVRSupportedCheck", function (event) {
       var supported = !!(event && event.detail && event.detail.supported);
       console.log("[WebXR] VR supported:", supported);
@@ -119,26 +171,16 @@
       setARButtonEnabled(unityInstance !== null && supported);
     }, false);
 
+    // Use pointerup so the WebXR request runs directly inside a real user gesture.
+    // Do not preventDefault or stopPropagation; the polyfill may also observe it.
+    enterVRButton.addEventListener("pointerup", function () {
+      requestEnterVR();
+    }, false);
+
+    // Keyboard/accessibility fallback. On touch devices the click immediately
+    // follows pointerup, so the in-progress guard prevents a duplicate request.
     enterVRButton.addEventListener("click", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (!unityInstance) {
-        console.warn("[WebXR] Unity is not ready.");
-        return;
-      }
-
-      if (!unityInstance.Module || !unityInstance.Module.WebXR || typeof unityInstance.Module.WebXR.toggleVR !== "function") {
-        console.error("[WebXR] toggleVR() is unavailable.");
-        return;
-      }
-
-      try {
-        console.log("[WebXR] Enter VR requested.");
-        unityInstance.Module.WebXR.toggleVR();
-      } catch (error) {
-        console.error("[WebXR] Enter VR failed:", error);
-      }
+      if (event.detail === 0) requestEnterVR();
     }, false);
 
     enterARButton.addEventListener("click", function (event) {
@@ -163,6 +205,13 @@
       }
     }, false);
 
+
+    document.addEventListener("onXRChange", function (event) {
+      vrActivationInProgress = false;
+      var state = event && event.detail ? event.detail : null;
+      setWebXRStatus(state ? "XR 模式已切換" : "一般模式", false);
+    }, false);
+
     loadingBar.style.display = "flex";
     setVRButtonEnabled(false);
     setARButtonEnabled(false);
@@ -181,8 +230,11 @@
           setVRButtonEnabled(true);
         }
 
+        setWebXRStatus("Unity 已就緒", false);
         console.log("[Unity] Unity instance ready.");
         console.log("[WebXR] Mobile device:", isMobileDevice);
+        console.log("[WebXR] navigator.xr:", navigator.xr);
+        console.log("[WebXR] bridge:", getWebXRBridge());
       }).catch(function (message) {
         console.error("[Unity] Failed to create Unity instance:", message);
         alert(message);

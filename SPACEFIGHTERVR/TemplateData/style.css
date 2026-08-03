@@ -272,3 +272,34 @@ body {
     height: 100%;
   }
 }
+
+
+#webxr-status {
+  flex: 0 1 180px;
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#webxr-status.error {
+  color: #ff8b8b;
+}
+
+@media (max-width: 760px) {
+  #webxr-status {
+    flex: 1 1 auto;
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px), (max-height: 480px) {
+  #webxr-status {
+    position: absolute;
+    left: 8px;
+    max-width: calc(100% - 140px);
+  }
+}
