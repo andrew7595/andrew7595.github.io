@@ -1,103 +1,199 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | {{{ PRODUCT_NAME }}}</title>
-    <meta name="description" content="{{{ DESCRIPTION }}}">
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container">
-      <div id="unity-canvas-container">
-        <canvas id="unity-canvas" style="width: 100%; height: 100%;"></canvas>
-      </div>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <button id="entervr" value="Enter VR" disabled>雙屏</button>
-        <button id="enterar" value="Enter AR" disabled>單屏</button>
-        <div id="unity-webxr-link">Teaching by <a href="https://dgad.tumt.edu.tw/" target="_blank" title="熱烈招生中">台北海大-數遊系</a></div>
-        <div id="unity-build-title">{{{ PRODUCT_NAME }}}</div>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="description" content="">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>Unity WebGL Player | EDGAD_10</title>
+
+  <link rel="shortcut icon" href="TemplateData/favicon.ico">
+  <link rel="stylesheet" href="TemplateData/style.css">
+</head>
+
+<body>
+  <div id="unity-container">
+    <div id="unity-canvas-container">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+    </div>
+
+    <div id="unity-loading-bar">
+      <div id="unity-logo"></div>
+      <div id="unity-progress-bar-empty">
+        <div id="unity-progress-bar-full"></div>
       </div>
     </div>
-    <script>
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
-      var config = {
-        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
-        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
-        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
-#if MEMORY_FILENAME
-        memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
-#endif
-#if SYMBOLS_FILENAME
-        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
-#endif
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "{{{ COMPANY_NAME }}}",
-        productName: "{{{ PRODUCT_NAME }}}",
-        productVersion: "{{{ PRODUCT_VERSION }}}",
-      };
 
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var canvasContainer = document.querySelector("#unity-canvas-container");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var unityInstance = null;
-      {{{ WEBXR_POLYFILL_CONFIG }}}
+    <div id="unity-footer">
+      <div id="unity-webgl-logo"></div>
 
-      canvasContainer.style.width = "{{{ WIDTH }}}px";
-      canvasContainer.style.height = "{{{ HEIGHT }}}px";
-#if BACKGROUND_FILENAME
-      canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
-#endif
-      loadingBar.style.display = "block";
+      <div id="unity-webxr-link">
+        Teaching by
+        <a href="https://dgad.tumt.edu.tw/" target="_blank" rel="noopener noreferrer" title="熱烈招生中">
+          台北海大-數遊系
+        </a>
+      </div>
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
-        }).then((instance) => {
-          unityInstance = instance;
-          loadingBar.style.display = "none";
-          if (fullscreenButton)
-          {
-            fullscreenButton.onclick = () => {
-              unityInstance.SetFullscreen(1);
-            };
-          }
-        }).catch((message) => {
-          alert(message);
-        });
-      };
-      document.body.appendChild(script);
+      <div id="unity-build-title">EDGAD_10</div>
 
-      let enterARButton = document.getElementById('enterar');
-      let enterVRButton = document.getElementById('entervr');
+      <button id="enterar" type="button" value="Enter AR" disabled>單屏</button>
+      <button id="entervr" type="button" value="Enter VR" disabled>雙屏</button>
+    </div>
+  </div>
 
-      document.addEventListener('onARSupportedCheck', function (event) {
-        enterARButton.disabled = !event.detail.supported;
-      }, false);
-      document.addEventListener('onVRSupportedCheck', function (event) {
-        enterVRButton.disabled = !event.detail.supported;
-      }, false);
+  <script>
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/SPACEFIGHTERVR.loader.js";
 
-      enterARButton.addEventListener('click', function (event) {
-        unityInstance.Module.WebXR.toggleAR();
-      }, false);
-      enterVRButton.addEventListener('click', function (event) {
+    var config = {
+      dataUrl: buildUrl + "/SPACEFIGHTERVR.data.unityweb",
+      frameworkUrl: buildUrl + "/SPACEFIGHTERVR.framework.js.unityweb",
+      codeUrl: buildUrl + "/SPACEFIGHTERVR.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "TUMT",
+      productName: "EDGAD_10",
+      productVersion: "0.1.0",
+      matchWebGLToCanvasSize: true,
+      devicePixelRatio: 1
+    };
+
+    var container = document.querySelector("#unity-container");
+    var canvas = document.querySelector("#unity-canvas");
+    var canvasContainer = document.querySelector("#unity-canvas-container");
+    var loadingBar = document.querySelector("#unity-loading-bar");
+    var progressBarFull = document.querySelector("#unity-progress-bar-full");
+    var enterVRButton = document.querySelector("#entervr");
+    var enterARButton = document.querySelector("#enterar");
+    var unityInstance = null;
+
+    var isMobileDevice = /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
+
+    
+
+
+    function updateViewportSize() {
+      var viewport = window.visualViewport;
+      var width = viewport ? viewport.width : window.innerWidth;
+      var height = viewport ? viewport.height : window.innerHeight;
+
+      document.documentElement.style.setProperty("--viewport-width", Math.round(width) + "px");
+      document.documentElement.style.setProperty("--viewport-height", Math.round(height) + "px");
+    }
+
+    updateViewportSize();
+    window.addEventListener("resize", updateViewportSize, { passive: true });
+    window.addEventListener("orientationchange", function () {
+      setTimeout(updateViewportSize, 150);
+    }, { passive: true });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", updateViewportSize, { passive: true });
+    }
+
+    function setVRButtonEnabled(enabled) {
+      enterVRButton.disabled = !enabled;
+      enterVRButton.setAttribute("aria-disabled", enabled ? "false" : "true");
+    }
+
+    function setARButtonEnabled(enabled) {
+      enterARButton.disabled = !enabled;
+      enterARButton.setAttribute("aria-disabled", enabled ? "false" : "true");
+    }
+
+    document.addEventListener("onVRSupportedCheck", function (event) {
+      var supported = !!(event && event.detail && event.detail.supported);
+      console.log("[WebXR] VR supported:", supported);
+
+      // Cardboard/polyfill support checks are not reliable on every mobile browser.
+      // Keep the button available on mobile once Unity has loaded.
+      setVRButtonEnabled(unityInstance !== null && (supported || isMobileDevice));
+    }, false);
+
+    document.addEventListener("onARSupportedCheck", function (event) {
+      var supported = !!(event && event.detail && event.detail.supported);
+      console.log("[WebXR] AR supported:", supported);
+      setARButtonEnabled(unityInstance !== null && supported);
+    }, false);
+
+    enterVRButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!unityInstance) {
+        console.warn("[WebXR] Unity is not ready.");
+        return;
+      }
+
+      if (!unityInstance.Module || !unityInstance.Module.WebXR || typeof unityInstance.Module.WebXR.toggleVR !== "function") {
+        console.error("[WebXR] toggleVR() is unavailable.");
+        return;
+      }
+
+      try {
+        console.log("[WebXR] Enter VR requested.");
         unityInstance.Module.WebXR.toggleVR();
-      }, false);
-    </script>
-  </body>
+      } catch (error) {
+        console.error("[WebXR] Enter VR failed:", error);
+      }
+    }, false);
+
+    enterARButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!unityInstance) {
+        console.warn("[WebXR] Unity is not ready.");
+        return;
+      }
+
+      if (!unityInstance.Module || !unityInstance.Module.WebXR || typeof unityInstance.Module.WebXR.toggleAR !== "function") {
+        console.error("[WebXR] toggleAR() is unavailable.");
+        return;
+      }
+
+      try {
+        console.log("[WebXR] Enter AR requested.");
+        unityInstance.Module.WebXR.toggleAR();
+      } catch (error) {
+        console.error("[WebXR] Enter AR failed:", error);
+      }
+    }, false);
+
+    loadingBar.style.display = "flex";
+    setVRButtonEnabled(false);
+    setARButtonEnabled(false);
+
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = function () {
+      createUnityInstance(canvas, config, function (progress) {
+        progressBarFull.style.width = (100 * progress) + "%";
+      }).then(function (instance) {
+        unityInstance = instance;
+        loadingBar.style.display = "none";
+
+        // Mobile Cardboard button remains usable even when the support event reports false.
+        if (isMobileDevice) {
+          setVRButtonEnabled(true);
+        }
+
+        console.log("[Unity] Unity instance ready.");
+        console.log("[WebXR] Mobile device:", isMobileDevice);
+      }).catch(function (message) {
+        console.error("[Unity] Failed to create Unity instance:", message);
+        alert(message);
+      });
+    };
+
+    script.onerror = function () {
+      console.error("[Unity] Loader failed:", loaderUrl);
+    };
+
+    document.body.appendChild(script);
+  </script>
+</body>
 </html>
