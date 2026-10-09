@@ -1,1 +1,245 @@
-LESSON
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>黃柏瑞老師｜課程作業專區</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      line-height: 1.6;
+      color: #eaf0ff;
+      background: #101827;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    header {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(26px, 5vw, 38px);
+    }
+
+    header p {
+      margin: 0;
+      color: #b8c5dc;
+    }
+
+    /* 圖片隨所在區塊寬度縮放，並維持原始比例 */
+    .responsive-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 24px auto;
+      border-radius: 14px;
+    }
+
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .course-card {
+      padding: 24px;
+      border: 1px solid #34435d;
+      border-radius: 16px;
+      background: #1a263b;
+    }
+
+    .course-card h2 {
+      margin: 0 0 20px;
+      font-size: 21px;
+      color: #ffffff;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 11px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.2s;
+    }
+
+    .upload {
+      color: #07242a;
+      background: #67e8f9;
+    }
+
+    .upload:hover {
+      background: #a5f3fc;
+    }
+
+    .download {
+      color: #ffffff;
+      background: #394e76;
+    }
+
+    .download:hover {
+      background: #4b6392;
+    }
+
+    .button:focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: 4px;
+    }
+
+    footer {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 14px;
+      color: #b8c5dc;
+    }
+
+    /* 手機改為單欄顯示 */
+    @media (max-width: 640px) {
+      .course-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 24px 16px;
+      }
+
+      .course-card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header>
+      <h1>黃柏瑞老師｜課程作業專區</h1>
+      <p>請選擇您的課程，進行作業上傳或下載。</p>
+    </header>
+
+    <!--
+      放圖位置：
+      將 banner.jpg 與 index.html 放在同一個資料夾。
+      也可以把 src 改成完整的圖片網址。
+      若暫時不放圖片，刪除下面這一行即可。
+    -->
+    <img
+      src="banner.jpg"
+      alt="課程介紹圖片"
+      class="responsive-image"
+    >
+
+    <section class="course-grid" aria-label="各課程作業連結">
+
+      <article class="course-card">
+        <h2>3D電腦建模</h2>
+        <div class="links">
+          <a class="button upload"
+             href="https://reurl.cc/Xx3LNR"
+             target="_blank"
+             rel="noopener noreferrer">上傳作業 ↗</a>
+          <a class="button download"
+             href="https://reurl.cc/5Xa70q"
+             target="_blank"
+             rel="noopener noreferrer">下載作業 ↗</a>
+        </div>
+      </article>
+
+      <article class="course-card">
+        <h2>互動設計概論</h2>
+        <div class="links">
+          <a class="button upload"
+             href="https://reurl.cc/KEvKKq"
+             target="_blank"
+             rel="noopener noreferrer">上傳作業 ↗</a>
+          <a class="button download"
+             href="https://reurl.cc/Vnqppy"
+             target="_blank"
+             rel="noopener noreferrer">下載作業 ↗</a>
+        </div>
+      </article>
+
+      <article class="course-card">
+        <h2>生成式AI與創意應用</h2>
+        <div class="links">
+          <a class="button upload"
+             href="https://reurl.cc/KEvKAj"
+             target="_blank"
+             rel="noopener noreferrer">上傳作業 ↗</a>
+          <a class="button download"
+             href="https://reurl.cc/OQe70r"
+             target="_blank"
+             rel="noopener noreferrer">下載作業 ↗</a>
+        </div>
+      </article>
+
+      <article class="course-card">
+        <h2>虛擬擴增實境應用（USRPBL）</h2>
+        <div class="links">
+          <a class="button upload"
+             href="https://reurl.cc/eQZv9x"
+             target="_blank"
+             rel="noopener noreferrer">上傳作業 ↗</a>
+          <a class="button download"
+             href="https://reurl.cc/WzVaEx"
+             target="_blank"
+             rel="noopener noreferrer">下載作業 ↗</a>
+        </div>
+      </article>
+
+      <article class="course-card">
+        <h2>遊戲程式設計</h2>
+        <div class="links">
+          <a class="button upload"
+             href="https://reurl.cc/WzWEkD"
+             target="_blank"
+             rel="noopener noreferrer">上傳作業 ↗</a>
+          <a class="button download"
+             href="https://reurl.cc/4YG5gD"
+             target="_blank"
+             rel="noopener noreferrer">下載作業 ↗</a>
+        </div>
+      </article>
+
+      <article class="course-card">
+        <h2>啟英高中－3D協同</h2>
+        <div class="links">
+          <a class="button upload"
+             href="https://reurl.cc/mzz0Ll"
+             target="_blank"
+             rel="noopener noreferrer">上傳作業 ↗</a>
+          <a class="button download"
+             href="https://reurl.cc/5XaDg7"
+             target="_blank"
+             rel="noopener noreferrer">下載作業 ↗</a>
+        </div>
+      </article>
+
+    </section>
+
+    <footer>
+      黃柏瑞老師｜教學資源與作業連結
+    </footer>
+  </main>
+</body>
+</html>
