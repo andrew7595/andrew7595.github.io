@@ -40,7 +40,6 @@
       color: #b8c5dc;
     }
 
-    /* 圖片隨所在區塊寬度縮放，並維持原始比例 */
     .responsive-image {
       display: block;
       width: 100%;
@@ -106,14 +105,60 @@
       outline-offset: 4px;
     }
 
-    footer {
-      margin-top: 32px;
+    .portfolio {
       text-align: center;
+      margin: 32px auto 0;
+      padding: 20px 20px 0;
+    }
+
+    .portfolio-button {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 8px;
+      background: #67e8f9;
+      color: #07242a;
+      font-size: 18px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .qrcode-link {
+      display: block;
+      width: fit-content;
+      max-width: 100%;
+      margin: 20px auto 0;
+    }
+
+    .qrcode-image {
+      display: block;
+      width: 200px;
+      max-width: 100%;
+      height: auto;
+      padding: 12px;
+      background: #ffffff;
+      border-radius: 12px;
+    }
+
+    .portfolio p {
+      margin: 12px 0 0;
+      color: #b8c5dc;
       font-size: 14px;
+    }
+
+    /* 最後一行：左右置中、縮小上方間距、字體稍微放大 */
+    footer {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 16px;
       color: #b8c5dc;
     }
 
-    /* 手機改為單欄顯示 */
+    footer a {
+      color: #67e8f9;
+      text-decoration: underline;
+      overflow-wrap: anywhere;
+    }
+
     @media (max-width: 640px) {
       .course-grid {
         grid-template-columns: 1fr;
@@ -137,12 +182,6 @@
       <p>請選擇您的課程，進行作業上傳或下載。已上傳的資料要修改或刪除，請洽老師。</p>
     </header>
 
-    <!--
-      放圖位置：
-      將 banner.jpg 與 index.html 放在同一個資料夾。
-      也可以把 src 改成完整的圖片網址。
-      若暫時不放圖片，刪除下面這一行即可。
-    -->
     <img
       src="banner.jpg"
       alt="這個紅叉叉是還沒想要放什麼圖"
@@ -194,7 +233,7 @@
       </article>
 
       <article class="course-card">
-        <h2>虛擬擴增實境應用（USRPBL）</h2>
+        <h2>虛擬擴增實境應用（USR/PBL）</h2>
         <div class="links">
           <a class="button upload"
              href="https://reurl.cc/eQZv9x"
@@ -237,56 +276,40 @@
 
     </section>
 
-<!-- 作品集連結與 QR Code：左右置中 -->
-<div style="text-align: center; margin: 32px auto; padding: 20px;">
+    <div class="portfolio">
+      <a
+        class="portfolio-button"
+        href="https://andrew7595.github.io/WEB/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        黃柏瑞老師｜個人作品集 ↗
+      </a>
 
-  <a
-    href="https://andrew7595.github.io/WEB/"
-    target="_blank"
-    rel="noopener noreferrer"
-    style="
-      display: inline-block;
-      padding: 12px 24px;
-      border-radius: 8px;
-      background: #67e8f9;
-      color: #07242a;
-      font-size: 18px;
-      font-weight: bold;
-      text-decoration: none;
-    "
-  >
-    黃柏瑞老師｜個人作品集 ↗
-  </a>
+      <a
+        class="qrcode-link"
+        href="https://andrew7595.github.io/WEB/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="開啟黃柏瑞老師的個人作品集"
+      >
+        <img
+          src="qrcode.jpg"
+          alt="個人作品集 QR Code"
+          class="qrcode-image"
+        >
+      </a>
 
-  <a
-    href="https://andrew7595.github.io/WEB/"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="開啟黃柏瑞老師的個人作品集"
-    style="display: block; width: fit-content; max-width: 100%; margin: 20px auto 0;"
-  >
-    <img
-      src="qrcode.jpg"
-      alt="個人作品集 QR Code"
-      style="
-        display: block;
-        width: 200px;
-        max-width: 100%;
-        height: auto;
-        padding: 12px;
-        background: #ffffff;
-        border-radius: 12px;
-      "
-    >
-  </a>
+      <p>掃描 QR Code 或點擊上方連結，瀏覽我的作品集。</p>
+    </div>
 
-  <p style="margin: 12px 0 0; color: #b8c5dc; font-size: 14px;">
-    掃描 QR Code 或點擊上方連結，瀏覽我的作品集。
-  </p>
-
-</div>
     <footer>
-      黃柏瑞老師｜教學資源與作業連結｜短網址 https://p-tu.cc/HWU
+      黃柏瑞老師｜教學資源與作業連結｜本頁面短網址
+      <a
+        href="https://p-tu.cc/HWU"
+        target="_blank"
+        rel="noopener noreferrer"
+      >https://p-tu.cc/HWU</a>
     </footer>
   </main>
 </body>
